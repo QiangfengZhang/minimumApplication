@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>京东图片放大</title>
+	<style>
+		body,ul,li {
+			margin: 0;
+			padding: 0;
+		}
+
+		#container {
+			width: 350px;
+			height: 450px;
+			position: relative;
+			margin: 100px 200px;
+		}
+		
+		#boxS {
+			width: 350px;
+			height: 350px;
+			position: relative;
+			border: 1px solid #ccc;
+		}
+		
+		#boxS #hover {
+			width: 100px;
+			height: 100px;
+			background: rgba(255, 255, 0, 0.3);
+			position: absolute;
+			left: 0;
+			top: 0;
+			cursor: move;
+			display: none;
+		}
+
+		#boxS img {
+			width: 348px;
+			height: 348px;
+		}
+
+		#boxL {
+			width: 500px;
+			height: 500px;
+			position: absolute;
+			border: 1px solid #ccc;
+			left: 380px;
+			top: 0;
+			overflow: hidden;
+			display: none;
+		}
+
+		#boxL img {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+
+		#preview {
+			width: 100%;
+			height: 100px;
+		}
+		
+		#preview #imgs {
+			width: 100%;
+			height: 100%;
+			list-style: none;
+			display: flex;
+			justify-content: flex-start;
+		}
+
+		#preview #imgs li {
+			height: 50px;
+			width: 50px;
+			border: 1px solid #ccc;
+			margin-right: 15px;
+			margin-top: 15px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="boxS">
+			<span id="hover"></span>
+			<img src="image/pic001.jpg" alt="图片不能加载">
+		</div>
+		<div id="boxL"><img src="image/pic01.jpg" alt="图片不能加载"></div>
+		<div id="preview">
+			<ul id="imgs">
+				<li id="pic1"><img src="image/pic0001.jpg" alt="图片不能加载"></li>
+				<li id="pic2"><img src="image/pic0002.jpg" alt="图片不能加载"></li>
+				<li id="pic3"><img src="image/pic0003.jpg" alt="图片不能加载"></li>
+			</ul>
+		</div>
+	</div>
+</body>
+<script>
+// 获取 DOM 元素
+var boxS = document.getElementById("boxS"),
+	boxL = document.getElementById("boxL"),
+	hover = document.getElementById("hover"),
+	picS = boxS.getElementsByTagName("img")[0],
+	picL = boxL.getElementsByTagName("img")[0],
+	pic1 = document.getElementById("pic1"),
+	pic2 = document.getElementById("pic2"),
+	pic3 = document.getElementById("pic3");
+
+// 鼠标进入 boxS 时，大图显示
+boxS.onmouseover = function() {
+	boxL.style.display = "block";
+	hover.style.display = "block";
+}
+
+// 鼠标在 boxS 内移动时，图像放大位置跟随鼠标移动
+boxS.onmousemove = function(event) {
+	// 兼容性处理
+	var event = event || window.event;
+	// 获取鼠标在小图标内的坐标，保证鼠标在hover中心
+	var pointX = event.pageX - this.parentNode.offsetLeft - hover.offsetWidth / 2;
+	var pointY = event.pageY - this.parentNode.offsetTop - hover.offsetHeight / 2;
+	console.log(pointX, pointY);
+	// 防止 hover 移出 boxS 的范围外
+	if (pointX < 0) {
+		pointX = 0;
+	} else if (pointX > this.parentNode.offsetWidth - hover.offsetWidth) {
+		pointX = this.parentNode.offsetWidth - hover.offsetWidth;
+	}
+	if (pointY < 0) {
+		pointY = 0;
+	} else if (pointY > this.parentNode.offsetHeight - 2 * hover.offsetHeight) {
+		pointY = this.parentNode.offsetHeight - 2 * hover.offsetHeight;
+	}
+	// hover 跟随鼠标移动
+	hover.style.left = pointX + "px";
+	hover.style.top = pointY + "px";
+
+	// 大图跟着鼠标反向移动
+	picL.style.left = -(pointX * boxL.offsetWidth / boxS.offsetWidth) + "px";
+	picL.style.top = -(pointY * boxL.offsetHeight / boxS.offsetHeight) + "px";
+}
+
+// 鼠标移出 boxS 时，大图隐藏
+boxS.onmouseout = function() {
+	boxL.style.display = "none";
+	hover.style.display = "none";
+}
+
+// 鼠标进入 imgs 时进行图片切换
+function changeImg(img, num) {
+	img.onmouseover = function() {
+		picS.src = "image/pic00" + num +".jpg";
+		picL.src = "image/pic0" + num + ".jpg";
+	}
+}
+changeImg(pic1, 1);
+changeImg(pic2, 2);
+changeImg(pic3, 3);
+</script>
+</html>
