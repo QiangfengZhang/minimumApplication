@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>轮播图</title>
+	<style>
+	/* 初始化 ul 样式 */
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	/* 设定最外层容器的样式 */
+	#container {
+		width: 379px;
+		height: 331px;
+		margin: auto;
+		overflow: hidden;
+		border: 5px solid rgb(211, 211, 211);
+		position: relative;
+	}
+
+	/* 绝对定位设定 容器内 ul 的样式 */
+	#container ul {
+		width: 1895px;
+		height: 331px;
+		position: absolute;
+	}
+
+	/* 设置 ul 标签下的 li标签的样式 */
+	#container ul li {
+		width: 379px;
+		height: 331px;
+		float: left;
+	}
+
+	/* 设置 li 标签下的 img 大小样式 */
+	#container ul li img {
+		width: 100%;
+		height: 100%;
+	}
+
+	/* 绝对定位 设置圆点容器的位置 */
+	.bannerDot {
+		position: absolute;
+		bottom: 15px;
+		left: 50%;
+		margin-left: -50px;
+	}
+
+	/* 设置所有圆点的样式 */
+	.bannerDot span {
+		width: 6px;
+		height: 6px;
+		border: 2px solid rgba(240, 255, 255, 0.3);
+		display: inline-block;
+		border-radius: 6px;
+		background-color: rgba(0, 0, 0, 0.4);
+		margin: 0 5px;
+	}
+
+	/* IE8 兼容处理 border-radius未能处理*/
+	.bannerDot span {
+		border: 2px solid rgb(240, 255, 255)\9;
+		background-color: rgb(0, 0, 0)\9;
+		filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=60)\9;
+	}
+
+	span.current {
+		background-color: rgb(255, 64, 64)\9;
+	}
+	/* IE8 兼容处理 */
+
+	/* 设置当前选中的圆点的背景颜色 */
+	span[class = "current"] {
+		background-color:rgba(255, 64, 64, 0.8);
+		border-color: rgba(0, 0, 0, 0.4);
+	}
+
+	/* 绝对定位 设置向左切换图片位置的样式 */
+	#left {
+		width: 30px;
+		height: 60px;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		color: white;
+		text-align: center;
+		line-height: 60px;
+		font-size: 20px;
+		cursor: pointer;
+		background-color: rgba(139, 139, 131, .7);
+		margin-top: -30px;
+	}
+
+	/* 绝对定位 设置向右切换图片位置的样式 */
+	#right {
+		width: 30px;
+		height: 60px;
+		position: absolute;
+		top: 50%;
+		right: 0;
+		color: white;
+		text-align: center;
+		line-height: 60px;
+		font-size: 20px;
+		cursor: pointer;
+		background-color: rgba(139, 139, 131, .7);
+		margin-top: -30px;
+	}
+
+	/* 鼠标移动到向左向右切换图片位置时，改变其背景颜色 */
+	#left:hover, #right:hover {
+		background-color: rgb(255, 64, 64);
+	}
+
+	</style>
+	<script src="http://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div id="container">
+		<ul>
+			<li><img src="img/1.jpg" alt=""></li>
+			<li><img src="img/2.jpg" alt=""></li>
+			<li><img src="img/3.jpg" alt=""></li>
+			<li><img src="img/4.jpg" alt=""></li>
+			<li><img src="img/5.jpg" alt=""></li>
+		</ul>
+		<div class="bannerDot">
+			<span class="current"></span>
+			<span></span>
+			<span></span>
+			<span></span>
+			<span></span>
+		</div>
+		<div id="left"> < </div>
+		<div id="right"> > </div>
+	</div>
+</body>
+<script>
+/**
+ * 1、自动的每两秒切换一张图片，无限循环;
+ * 2、每切换一张图片时，对应的圆点样式显示红色背景;
+ * 3、单击"<"(">")向左(右)依次切换图片;
+ */
+$(document).ready(function(){
+
+	// 自定义变量 target，保存 ul 的CSS样式中的 marginLeft 值
+	var target = 0;
+
+	// 缓存---设置当前 target 值对应的显示在html页面中的图片及相应圆点样式
+	setInterval(function(){
+		if(target < -1516) {
+			// 当 target 值小于 -1516 时，将 target 值设置为 0
+			target = 0;
+		}else if(target > 0){
+			// 当 target 值大于 0 时，将 target 值设置为 -1516
+			target = -1516;
+		}else {
+			// 设置当前 target 值下，ul 的CSS样式中的 marginLeft 值
+			$("#container ul").css("marginLeft", target);
+		}
+		// 设置与 target 值相对应的圆点样式
+		switch(target) {
+			case 0: clearDot(1);
+			break;
+			case -379: clearDot(2);
+			break;
+			case -758: clearDot(3);
+			break;
+			case -1137: clearDot(4);
+			break;
+			case -1516: clearDot(5);
+			break;
+		}
+	}, 20);
+
+	/**
+	 * 自动播放函数
+	 * 递减 target 值
+	 */
+	function autoPlay() {
+		target -=379;
+	}
+
+	// 设定每 2 秒执行一次 autoPlay 函数，即每 2 秒切换一张图片
+	var timer = setInterval(autoPlay, 2000);
+
+	// 当鼠标移动至 container 容器时，暂停自动播放
+	$("#container").mouseover(function(){
+		clearInterval(timer);
+	});
+
+	// 当鼠标移出 container 容器时，开始自动播放
+	$("#container").mouseout(function(){
+		timer = setInterval(autoPlay, 2000);
+	});
+
+	// 给向左切换绑定点击事件，每点击一次 target 值减少 379
+	$("#left").click(function(){
+		target -=379;
+	});
+
+	// 给向右切换绑定点击事件，每点击一次 target 值增加 379
+	$("#right").click(function(){
+		target +=379;
+	});
+
+	/**
+	 * 圆点跟随图片切换样式
+	 * @param  n 第几张图片
+	 */
+	function clearDot(n) {
+		// 清除所有的current样式类
+		$(".bannerDot span").removeClass("current");
+		if(n == 1) {
+			// 将第 1 个圆点样式设置为当前选中样式
+			$(".bannerDot span:nth-child(1)").addClass("current");
+		}else if(n == 2) {
+			// 将第 2 个圆点样式设置为当前选中样式
+			$(".bannerDot span:nth-child(2)").addClass("current");
+		}else if(n == 3) {
+			// 将第 3 个圆点样式设置为当前选中样式
+			$(".bannerDot span:nth-child(3)").addClass("current");
+		}else if(n == 4) {
+			// 将第 4 个圆点样式设置为当前选中样式
+			$(".bannerDot span:nth-child(4)").addClass("current");
+		}else if(n == 5) {
+			// 将第 5 个圆点样式设置为当前选中样式
+			$(".bannerDot span:nth-child(5)").addClass("current");
+		}
+	}	
+	
+});
+</script>
+</html>
